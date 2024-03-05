@@ -13,14 +13,23 @@ dependencies:
   go_router: ^12.0.3
   google_sign_in: ^6.2.1
   firebase_core: ^2.24.2
+  firebase_auth: ^4.16.0
+  dio: ^5.4.1
+  carousel_slider: ^4.2.1
+  url_launcher: ^6.2.5
+  like_button: ^2.0.5
+  flutter_rating_bar: ^4.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
 
-assets:
- -assets/images/movie_logo.png
+
+
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/images/

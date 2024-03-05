@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -22,7 +23,13 @@ void initState(){
 
 _navigate()async{
 await Future.delayed(Duration(milliseconds: 2500),(){});
-GoRouter.of(context).pushReplacement('/homepage');
+final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    return
+  GoRouter.of(context).pushReplacement('/homepage');
+  } else {
+  GoRouter.of(context).pushReplacement('/signin');  
+  }
 
 }
 
@@ -35,7 +42,7 @@ GoRouter.of(context).pushReplacement('/homepage');
       body: Center(
         child:
           Container(
-            child: Image.asset('images/movie_logo.png', height: height * 0.3, width: width * 0.3,)
+            child: Image.asset('assets/images/movie_logo.png', height: height * 0.3, width: width * 0.3,)
             
           ),
         ),
