@@ -37,6 +37,8 @@ class _Movie_detailState extends State<Movie_detail> {
     return Scaffold(
         appBar: AppBar(
           title: Text('movie_details'),
+          leading : IconButton(onPressed: ()=>context.pop(), icon: Icon(Icons.arrow_back),alignment: Alignment.topLeft)
+          
         ),
         body: FutureBuilder(
             future: getdetail,
@@ -102,8 +104,7 @@ class _Movie_detailState extends State<Movie_detail> {
                           Icons.star,
                           color: Colors.amber,
                         ),
-                        onRatingUpdate: (rating) {
-                          print(rating);
+                        onRatingUpdate: ( double rating) {
                         },
                       ),
 

@@ -8,25 +8,61 @@ import 'package:dio/dio.dart';
 var client = http.Client();
 
 class Api{
-  Future<List<Movie_now>> getnowplaying() async{
+  Future<List<Movie_image>> getnowplaying() async{
     final url =Uri.parse("https://movies-tv-shows-database.p.rapidapi.com?page=1");
     client.get(url);
     final headers = {
       'Type' : 'get-nowplaying-movies',
-      'X-Rapidapi-Key': '5794af3459msh96a2f5b81af19a2p1cdc17jsn7dd1aa41b2f4',
+      'X-Rapidapi-Key': '91a5595eabmsha74e46be37f3932p142907jsne3576302a468',
+      'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com'
+    };
+    
+    
+    final headers2 = {
+      'Type' : 'get-movies-images-by-imdb',
+      'X-Rapidapi-Key': '91a5595eabmsha74e46be37f3932p142907jsne3576302a468',
       'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com'
     };
     final response = await client.get(url, headers: headers);
-
+    List<Movie_image>movienowimage = [];
     if (response.statusCode == 200){
       final movienowlist = json.decode(response.body)['movie_results'] as List;
       // print(response.isRedirect);
-      return movienowlist.map((movie_now)=> Movie_now.fromJson(movie_now)).toList();
+      final movienow = movienowlist.map((movie_now)=> Movie_now.fromJson(movie_now)).toList();
+      for(int i =0;i<movienow.length;i++){
+        final url2 =Uri.parse('https://movies-tv-shows-database.p.rapidapi.com?movieid=${movienow[i].id}');
+        // print(movienow[i].id);
+        client.get(url2);
+        final response2 = await client.get(url2, headers: headers2);
+        if (response2.statusCode == 200){
+          // print('step${i}');
+          final movieimagelist = json.decode(response2.body);
+          print(movieimagelist);
+          final movieimagelist2 = Movie_image.fromJson(movieimagelist);
+          print(movieimagelist2.poster);
+          movienowimage.add(movieimagelist2);
+
+        }
+        else{
+          print(response2.statusCode);
+          throw Exception("newcodefailed");
+        } 
+      }
+      return movienowimage;
     }
     else {
-      print("error1");
-      throw Exception('error1');
+      print(response.statusCode);
+      throw Exception(response.statusCode);
     }
+    
+    
+    
+    //   return movieimagelist.map((movie_image)=> Movie_image.fromJson(movie_image)).toList();
+    // }
+    // else {
+    //   print(response2.statusCode);
+    //   throw Exception(response2.statusCode);
+    // }
 
   }
 
@@ -34,7 +70,7 @@ class Api{
     final dio = Dio();
     final headers = {
       'Type' : 'get-movies-images-by-imdb',
-     "X-Rapidapi-Key": "5794af3459msh96a2f5b81af19a2p1cdc17jsn7dd1aa41b2f4",
+      "X-Rapidapi-Key": "91a5595eabmsha74e46be37f3932p142907jsne3576302a468",
       'X-Rapidapi-Host': "movies-tv-shows-database.p.rapidapi.com",
     };
     try {
@@ -68,7 +104,7 @@ class Api{
     final dio = Dio();
     final headers = {
       'Type' : 'get-movies-images-by-imdb',
-     "X-Rapidapi-Key": "5794af3459msh96a2f5b81af19a2p1cdc17jsn7dd1aa41b2f4",
+     "X-Rapidapi-Key": "91a5595eabmsha74e46be37f3932p142907jsne3576302a468",
       'X-Rapidapi-Host': "movies-tv-shows-database.p.rapidapi.com",
     };
     try {
@@ -91,7 +127,7 @@ class Api{
   Future<Movie_data> getmoviedetail(String id) async {
     final headers = {
       'Type' : 'get-movie-details',
-      'X-Rapidapi-Key': '5794af3459msh96a2f5b81af19a2p1cdc17jsn7dd1aa41b2f4',
+      'X-Rapidapi-Key': '91a5595eabmsha74e46be37f3932p142907jsne3576302a468',
       'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com'
     };
     var dio = Dio();

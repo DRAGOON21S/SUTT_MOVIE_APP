@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movie_app/api/api.dart';
+import 'package:movie_app/models/movie_image.dart';
 import 'package:movie_app/models/movie_now_playing.dart';
 import 'package:movie_app/pages/movie_detail.dart';
 import 'package:movie_app/widgets/Splash_widget.dart';
@@ -18,7 +19,7 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
 
-  late Future<List<Movie_now>> getnowplaying;
+  late Future<List<Movie_image>> getnowplaying;
   @override
   void initState(){
     super.initState();
@@ -41,50 +42,50 @@ class _HomepageState extends State<Homepage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
             if (snapshot.hasData) {
-              return FutureBuilder<List<Movie_now>>(
-      future: getnowplaying,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Splash_widget(); // Display a loading indicator while waiting for the Future to complete
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}'); // Display an error message if the Future fails
-        } else {
-
-        
-
-          return Scaffold(
-              appBar: AppBar(
-                  title:Text('Welcome, ${FirebaseAuth.instance.currentUser?.displayName}!'),
-                  actions: [
-                    IconButton(onPressed: ()async{
-                      await GoogleSignIn().signOut();
-                      FirebaseAuth.instance.signOut();
-                      GoRouter.of(context).go('/signin');},
-                      icon: Icon(Icons.logout)
-                    )],),
+              return FutureBuilder<List<Movie_image>>(
+                future: getnowplaying,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Splash_widget(); 
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}'); 
+                  } else {
+                     return Scaffold(
+                      appBar: AppBar(
+                       title:Text('Welcome, ${FirebaseAuth.instance.currentUser?.displayName}!'),
+                       actions: [
+                         IconButton(onPressed: ()async{
+                          await GoogleSignIn().signOut();
+                          FirebaseAuth.instance.signOut();
+                          GoRouter.of(context).go('/signin');},
+                          icon: Icon(Icons.logout)
+                       )],),
 
               body: SingleChildScrollView(
 
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Row(
-                    //   children: [
-                    //     SizedBox(height: 10),
-                    //       TextField(
-                    //       controller: _controller,
-                    //       decoration: InputDecoration(
-                    //       border: OutlineInputBorder(),
-                    //       labelText: 'Search movie by name',
-                    //       ),),
-                    //     MaterialButton(
-                    //       onPressed: () {
-                    //         print(_controller.text);
-                    //       },
-                    //       child: Text('Search'),
-                    //     ),
-                    //   ],
-                    // ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: height*0.08,
+                          width : width*0.7,
+                          child:  TextField(
+                            controller: _controller,
+                            decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Search movie by name',
+                          ),),),
+                        MaterialButton(
+                          onPressed: () {
+                            print(_controller.text);
+                          },
+                          child: Text('Search'),
+                        ),
+                      ],
+                    ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(10,1,10,1),
                       child:
@@ -108,22 +109,18 @@ class _HomepageState extends State<Homepage> {
                             ),
 
                             itemBuilder: (context,itemIndex, pageViewIndex){
-                              return FutureBuilder(
-                                future: Api().getmovieimage(snapshot.data![itemIndex].id),
-                                builder: (context, snapshot2) {
-                                  if (snapshot.connectionState == ConnectionState.done && snapshot2.hasData) {
-                                    return Padding(
+                              return Padding(
                                       padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(20.0),
                                         child: MaterialButton(
                                         onPressed: () async {
-                                          GoRouter.of(context).go('/movie-detail/${snapshot.data![itemIndex].id}');
+                                          GoRouter.of(context).push('/movie-detail/${snapshot.data![itemIndex].id}');
                                         },
                                         child:SizedBox(
                                           width: width,
                                           child: Image.network(
-                                            snapshot2.data!,
+                                            snapshot.data![itemIndex].poster,
                                             fit: BoxFit.cover,
                                             errorBuilder: (context, error, stackTrace) {
                                             return Image.asset('assets/images/404_not_found.png', fit: BoxFit.cover);},
@@ -131,15 +128,10 @@ class _HomepageState extends State<Homepage> {
                                         ),
                                       ),),
                                     );
-                                  } 
-                                  else if (snapshot2.connectionState == ConnectionState.waiting) {
-                                    return Splash_widget();}
-                                  else {
-                                    return CircularProgressIndicator();
-                                  }
+                                   
+                                  
                                 },
-                              );
-                            }
+                              
 
 
                         )

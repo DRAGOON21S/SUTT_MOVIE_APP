@@ -1,21 +1,21 @@
 class Movie_image{
-  // String title;
-  // String id;
+  String title;
+  String id;
   String poster;
   // String fanart;
 
   Movie_image({
-    // required this.title,
-    // required this.id,
+    required this.title,
+    required this.id,
     required this.poster,
     // required this.fanart,
   });
 
   factory Movie_image.fromJson(Map<String, dynamic> json){
     return Movie_image(
-      // title : json["title"],
-      // id: json["IMDB"],
-      poster: json["poster"] ?? 'https://movies-tv-shows-database.p.rapidapi.com/?movieid=tt11097384',
+      title : json["title"],
+      id: json["IMDB"],
+      poster: json["poster"] ?? 'notfound',
       // fanart: json["fanart"],
     );
   }
