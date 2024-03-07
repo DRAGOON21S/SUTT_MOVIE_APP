@@ -22,7 +22,7 @@ void initState(){
 }
 
 _navigate()async{
-await Future.delayed(Duration(milliseconds: 500),(){});
+await Future.delayed(Duration(milliseconds: 1200),(){});
 final user = FirebaseAuth.instance.currentUser;
   if (user != null) {
     return

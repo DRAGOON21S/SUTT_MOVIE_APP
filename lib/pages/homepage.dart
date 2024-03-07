@@ -114,12 +114,12 @@ class _HomepageState extends State<Homepage> {
                                 options: CarouselOptions(
                                   height: height*0.85 ,
                                   // aspectRatio: 9/15 ,
-                                  // autoPlay: true,
+                                  autoPlay: true,
                                   viewportFraction: 0.8,
                                   enlargeCenterPage: true,
                                   pageSnapping: true,
-                                  // autoPlayCurve: Curves.easeInOutCubicEmphasized,
-                                  // autoPlayAnimationDuration: Duration(seconds: 3),
+                                  autoPlayCurve: Curves.easeInOutCubicEmphasized,
+                                  autoPlayAnimationDuration: Duration(seconds: 4),
                       
                                 ),
                       
