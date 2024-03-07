@@ -8,48 +8,51 @@ import 'package:dio/dio.dart';
 var client = http.Client();
 
 class Api{
-  Future<List<Movie_image>> getnowplaying() async{
-    final url =Uri.parse("https://movies-tv-shows-database.p.rapidapi.com?page=1");
-    client.get(url);
-    final headers = {
-      'Type' : 'get-nowplaying-movies',
-      'X-Rapidapi-Key': 'd6928efbf1mshb22eb73bf3c30d7p11c905jsneb48f8278b95',
-      'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com'
-    };
-    
-    
-    final headers2 = {
-      'Type' : 'get-movies-images-by-imdb',
-      'X-Rapidapi-Key': 'd6928efbf1mshb22eb73bf3c30d7p11c905jsneb48f8278b95',
-      'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com'
-    };
-    final response = await client.get(url, headers: headers);
-    List<Movie_image>movienowimage = [];
-    if (response.statusCode == 200){
-      final movienowlist = json.decode(response.body)['movie_results'] as List;
-      final movienow = movienowlist.map((movie_now)=> Movie_now.fromJson(movie_now)).toList();
-      for(int i =0;i<movienow.length;i++){
-        final url2 =Uri.parse('https://movies-tv-shows-database.p.rapidapi.com?movieid=${movienow[i].id}');
-        client.get(url2);
-        final response2 = await client.get(url2, headers: headers2);
-        if (response2.statusCode == 200){
-          final movieimagelist = json.decode(response2.body);
-          final movieimagelist2 = Movie_image.fromJson(movieimagelist);
-          movienowimage.add(movieimagelist2);
+  Future<List<Movie_image>> getnowplaying() async {
+  final url = Uri.parse("https://movies-tv-shows-database.p.rapidapi.com?page=1");
+  final headers = {
+    'Type': 'get-nowplaying-movies',
+    'X-Rapidapi-Key': 'd6928efbf1mshb22eb73bf3c30d7p11c905jsneb48f8278b95',
+    'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com'
+  };
 
-        }
-        else{
+  final headers2 = {
+    'Type': 'get-movies-images-by-imdb',
+    'X-Rapidapi-Key': 'd6928efbf1mshb22eb73bf3c30d7p11c905jsneb48f8278b95',
+    'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com'
+  };
+
+  final response = await client.get(url, headers: headers);
+  List<Movie_image> movienowimage = [];
+
+  if (response.statusCode == 200) {
+    final movienowlist = json.decode(response.body)['movie_results'] as List;
+    final movienow = movienowlist.map((movie_now) => Movie_now.fromJson(movie_now)).toList();
+
+    List<Future<Movie_image>> movieImageFutures = [];
+    for (int i = 0; i < movienow.length; i++) {
+      final url2 = Uri.parse('https://movies-tv-shows-database.p.rapidapi.com?movieid=${movienow[i].id}');
+      movieImageFutures.add(client.get(url2, headers: headers2).then((response2) {
+        if (response2.statusCode == 200) {
+          final movieimagelist = json.decode(response2.body);
+          return Movie_image.fromJson(movieimagelist);
+        } else {
           print(response2.statusCode);
           throw Exception("newcodefailed");
-        } 
-      }
-      return movienowimage;
+        }
+      }));
     }
-    else {
-      print(response.statusCode);
-      throw Exception(response.statusCode);
-    }
-   }
+
+    final movieImagesList = await Future.wait(movieImageFutures);
+
+    movienowimage.addAll(movieImagesList);
+
+    return movienowimage;
+  } else {
+    print(response.statusCode);
+    throw Exception(response.statusCode);
+  }
+}
 
   Future<String> getmovieimage(dynamic id) async{
     final dio = Dio();
@@ -123,53 +126,55 @@ class Api{
     }
   }
 
-Future<List<Movie_image>> getmovieresult(String name) async{
+Future<List<Movie_image>> getmovieresult(String name) async {
   final headers = {
-      'Type' : 'get-movies-by-title',
-      'X-Rapidapi-Key': 'd6928efbf1mshb22eb73bf3c30d7p11c905jsneb48f8278b95',
-      'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com'
-    };
+    'Type': 'get-movies-by-title',
+    'X-Rapidapi-Key': 'd6928efbf1mshb22eb73bf3c30d7p11c905jsneb48f8278b95',
+    'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com',
+  };
   final headers2 = {
-      'Type' : 'get-movies-images-by-imdb',
-      'X-Rapidapi-Key': 'd6928efbf1mshb22eb73bf3c30d7p11c905jsneb48f8278b95',
-      'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com'
-    };
-    final url =Uri.parse("https://movies-tv-shows-database.p.rapidapi.com/?title=${name}");
-    client.get(url);
-    List<Movie_image>searchresultimage = [];
-    
-    final response2 = await client.get(url, headers: headers);
-      if (response2.statusCode == 200){
-        final qwerty = json.decode(response2.body)['search_results'];
-        if(qwerty>0){
-          final searchresultlist = json.decode(response2.body)['movie_results'] as List;
-          final searchresult = searchresultlist.map((search_result)=> Movie_now.fromJson(search_result)).toList();
-          for(int i =0;i<searchresult.length;i++){
-            final url2=Uri.parse('https://movies-tv-shows-database.p.rapidapi.com?movieid=${searchresult[i].id}');
-            final response3 = await client.get(url2, headers: headers2);
-            if (response3.statusCode == 200){
-              final searchimagelist = json.decode(response3.body);
-              // print(searchimagelist);
-              final searchimagelist2 = Movie_image.fromJson(searchimagelist);
-              searchresultimage.add(searchimagelist2);
+    'Type': 'get-movies-images-by-imdb',
+    'X-Rapidapi-Key': 'd6928efbf1mshb22eb73bf3c30d7p11c905jsneb48f8278b95',
+    'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com',
+  };
+  final url = Uri.parse("https://movies-tv-shows-database.p.rapidapi.com/?title=${name}");
+  client.get(url);
+  List<Movie_image> searchResultImages = [];
 
-        }
-          else{
-            print(response2.statusCode);
+  final response2 = await client.get(url, headers: headers);
+  if (response2.statusCode == 200) {
+    final qwerty = json.decode(response2.body)['search_results'];
+    if (qwerty > 0) {
+      final searchResultList = json.decode(response2.body)['movie_results'] as List;
+      final searchResult = searchResultList.map((search_result) => Movie_now.fromJson(search_result)).toList();
+
+      final futures = <Future<Movie_image>>[];
+      for (int i = 0; i < searchResult.length; i++) {
+        final url2 = Uri.parse('https://movies-tv-shows-database.p.rapidapi.com?movieid=${searchResult[i].id}');
+        final future = client.get(url2, headers: headers2).then((response3) async {
+          if (response3.statusCode == 200) {
+            final searchImageList = json.decode(response3.body);
+            return Movie_image.fromJson(searchImageList);
+          } else {
             throw Exception("newnewcodefailed");
-        
-        }}
-         return searchresultimage;}
-         else{
-          searchresultimage.add(Movie_image(title: '', id: '', poster: ''));
-          return searchresultimage;
-         }
-         }
-      else {
-        print("error");
-        throw Exception('error');
+          }
+        });
+        futures.add(future);
       }
+
+      final images = await Future.wait(futures);
+      searchResultImages.addAll(images);
+
+      return searchResultImages;
+    } else {
+      searchResultImages.add(Movie_image(title: '', id: '', poster: ''));
+      return searchResultImages;
     }
+  } else {
+    print("error");
+    throw Exception('error');
+  }
+}
     }
   
    

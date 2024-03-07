@@ -110,7 +110,7 @@ class _HomepageState extends State<Homepage> {
                           // height : height,
                             width: double.infinity,
                             child: CarouselSlider.builder(
-                                itemCount: 3,
+                                itemCount: 20,
                                 options: CarouselOptions(
                                   height: height*0.85 ,
                                   // aspectRatio: 9/15 ,
