@@ -36,31 +36,6 @@ class _SplashState extends State<Splash_widget> {
   }
 }
 
-// import 'dart:ui';
-
-// import 'package:flutter/material.dart';
-
-// void main() {
-//   runApp(MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(title: Text('Rotating Image')),
-//         body: Center(
-//           child: RotatingImage(
-//             image: AssetImage('assets/images/flutter_logo.png'),
-//             duration: Duration(seconds: 2),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 class RotatingImage extends StatefulWidget {
   final ImageProvider image;
   final Duration duration;

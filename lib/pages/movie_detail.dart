@@ -3,13 +3,9 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:like_button/like_button.dart';
 import 'package:movie_app/api/api.dart';
-// import 'package:movie_app/api/api2.dart';
-// import 'package:movie_app/pages/homepage.dart';
 import 'package:movie_app/logic/str_double.dart';
 import 'package:movie_app/models/movie_data.dart';
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
-// import 'package:dio/dio.dart';
+import 'package:movie_app/widgets/Splash_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Movie_detail extends StatefulWidget {
@@ -37,7 +33,7 @@ class _Movie_detailState extends State<Movie_detail> {
     return Scaffold(
         appBar: AppBar(
           title: Text('movie_details'),
-          leading : IconButton(onPressed: ()=>context.pop(), icon: Icon(Icons.arrow_back),alignment: Alignment.topLeft)
+          leading : IconButton(onPressed: ()=>context.pop(), icon: Icon(Icons.arrow_back))
           
         ),
         body: FutureBuilder(
@@ -66,7 +62,7 @@ class _Movie_detailState extends State<Movie_detail> {
                             );
                         }
                          else {
-                            return CircularProgressIndicator();
+                            return Splash_widget();
                         }},
                       ),
                     ),
