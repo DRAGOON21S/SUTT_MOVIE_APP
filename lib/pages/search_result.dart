@@ -1,8 +1,10 @@
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movie_app/api/api.dart';
 import 'package:movie_app/models/movie_image.dart';
+import 'package:movie_app/pages/provider.dart';
 import 'package:movie_app/widgets/Splash_widget.dart';
 
 class SearchBox extends StatelessWidget {
@@ -53,15 +55,15 @@ class SearchBox extends StatelessWidget {
   }
 }
 
-class Search_result extends StatefulWidget {
+class Search_result extends ConsumerStatefulWidget {
   String name;
   Search_result({required this.name});
 
   @override
-  State<Search_result> createState() => _Search_resultState();
+  ConsumerState<Search_result> createState() => _Search_resultState();
 }
 
-class _Search_resultState extends State<Search_result> {
+class _Search_resultState extends ConsumerState<Search_result> {
 
   late Future<List<Movie_image>> getresults;
   late List<Movie_image> list2;
@@ -114,7 +116,8 @@ class _Search_resultState extends State<Search_result> {
                                   tileColor: Colors.blueGrey[900],
                                   hoverColor: Colors.blueGrey[700],
                                   onTap: () async{
-                                    GoRouter.of(context).push('/movie-detail/${snapshot.data![index].id}');
+                                    GoRouter.of(context).push('/movie-detail/');
+                                    ref.read(idStateProvider.notifier).state=snapshot.data![index].id;
                                   },
                                 )
                               );}

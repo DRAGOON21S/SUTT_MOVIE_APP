@@ -5,27 +5,32 @@ import 'package:like_button/like_button.dart';
 import 'package:movie_app/api/api.dart';
 import 'package:movie_app/logic/str_double.dart';
 import 'package:movie_app/models/movie_data.dart';
+import 'package:movie_app/pages/provider.dart';
 import 'package:movie_app/widgets/Splash_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Movie_detail extends StatefulWidget {
-  final String id;
+class Movie_detail extends ConsumerStatefulWidget {
+  // final String id;
 
-  Movie_detail({required this.id});
+  // Movie_detail({required this.id});
 
   @override
-  State<Movie_detail> createState() => _Movie_detailState();
+  ConsumerState<Movie_detail> createState() => _Movie_detailState();
 }
 
-class _Movie_detailState extends State<Movie_detail> {
+class _Movie_detailState extends ConsumerState<Movie_detail> {
   
 
   late Future<Movie_data> getdetail;
   late Future<String> getfanart;
   @override
   void initState(){
-    getdetail=Api().getmoviedetail(widget.id);
-    getfanart=Api().getfanart(widget.id);
+    final hi = ref.read(idStateProvider);
+    getdetail=Api().getmoviedetail(hi);
+    getfanart=Api().getfanart(hi);
+    
+    print(hi);
   }
 
   @override
@@ -33,7 +38,8 @@ class _Movie_detailState extends State<Movie_detail> {
     return Scaffold(
         appBar: AppBar(
           title: Text('movie_details'),
-          leading : IconButton(onPressed: ()=>context.pop(), icon: Icon(Icons.arrow_back))
+          leading : IconButton(icon: Icon(Icons.arrow_back), onPressed: (){context.pop();
+          ref.read(idStateProvider.notifier).state='';})
           
         ),
         body: SingleChildScrollView(

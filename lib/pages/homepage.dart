@@ -1,20 +1,22 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movie_app/api/api.dart';
 import 'package:movie_app/models/movie_image.dart';
+import 'package:movie_app/pages/provider.dart';
 import 'package:movie_app/widgets/Splash_widget.dart';
 
-class Homepage extends StatefulWidget {
+class Homepage extends ConsumerStatefulWidget {
   const Homepage({super.key});
 
   @override
-  State<Homepage> createState() => _HomepageState();
+  ConsumerState<Homepage> createState() => _HomepageState();
 }
 
-class _HomepageState extends State<Homepage> {
+class _HomepageState extends ConsumerState<Homepage> {
 
   late Future<List<Movie_image>> getnowplaying;
   @override
@@ -119,7 +121,7 @@ class _HomepageState extends State<Homepage> {
                                   enlargeCenterPage: true,
                                   pageSnapping: true,
                                   autoPlayCurve: Curves.easeInOutCubicEmphasized,
-                                  autoPlayAnimationDuration: Duration(seconds: 4),
+                                  autoPlayAnimationDuration: const Duration(seconds: 4),
                       
                                 ),
                       
@@ -130,8 +132,10 @@ class _HomepageState extends State<Homepage> {
                                             borderRadius: BorderRadius.circular(20.0),
                                             child: MaterialButton(
                                             onPressed: () async {
-                                              GoRouter.of(context).push('/movie-detail/${snapshot.data![itemIndex].id}');
-                                            },
+                                              ref.read(idStateProvider.notifier).state=snapshot.data![itemIndex].id;
+                                              GoRouter.of(context).push('/movie-detail/');
+                                            }
+                                            ,
                                             child:SizedBox(
                                               width: width,
                                               child: Image.network(

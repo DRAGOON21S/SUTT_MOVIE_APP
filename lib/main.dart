@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_app/firebase_options.dart';
 import 'package:movie_app/routes/go_routes.dart';
 
@@ -8,7 +9,7 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
 );
-  runApp(const MainApp());
+  runApp(const ProviderScope(child : MainApp()));
 }
 
 class MainApp extends StatefulWidget {

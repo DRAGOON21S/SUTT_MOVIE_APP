@@ -12,13 +12,13 @@ class Api{
   final url = Uri.parse("https://movies-tv-shows-database.p.rapidapi.com?page=1");
   final headers = {
     'Type': 'get-nowplaying-movies',
-    'X-Rapidapi-Key': 'e96cc21db3msh074982622cfddc6p1abee5jsna5db23f498e2',
+    'X-Rapidapi-Key': '8c1674b0d6msh145daffaa29913cp1d4d8fjsn2789aa40069f',
     'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com'
   };
 
   final headers2 = {
     'Type': 'get-movies-images-by-imdb',
-    'X-Rapidapi-Key': 'e96cc21db3msh074982622cfddc6p1abee5jsna5db23f498e2',
+    'X-Rapidapi-Key': '8c1674b0d6msh145daffaa29913cp1d4d8fjsn2789aa40069f',
     'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com'
   };
 
@@ -58,7 +58,7 @@ class Api{
     final dio = Dio();
     final headers = {
       'Type' : 'get-movies-images-by-imdb',
-      "X-Rapidapi-Key": "e96cc21db3msh074982622cfddc6p1abee5jsna5db23f498e2",
+      "X-Rapidapi-Key": "8c1674b0d6msh145daffaa29913cp1d4d8fjsn2789aa40069f",
       'X-Rapidapi-Host': "movies-tv-shows-database.p.rapidapi.com",
     };
     try {
@@ -81,7 +81,7 @@ class Api{
     final dio = Dio();
     final headers = {
       'Type' : 'get-movies-images-by-imdb',
-     "X-Rapidapi-Key": "e96cc21db3msh074982622cfddc6p1abee5jsna5db23f498e2",
+     "X-Rapidapi-Key": "8c1674b0d6msh145daffaa29913cp1d4d8fjsn2789aa40069f",
       'X-Rapidapi-Host': "movies-tv-shows-database.p.rapidapi.com",
     };
     try {
@@ -103,7 +103,7 @@ class Api{
   Future<Movie_data> getmoviedetail(String id) async {
     final headers = {
       'Type' : 'get-movie-details',
-      'X-Rapidapi-Key': 'e96cc21db3msh074982622cfddc6p1abee5jsna5db23f498e2',
+      'X-Rapidapi-Key': '8c1674b0d6msh145daffaa29913cp1d4d8fjsn2789aa40069f',
       'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com'
     };
     var dio = Dio();
@@ -129,12 +129,12 @@ class Api{
 Future<List<Movie_image>> getmovieresult(String name) async {
   final headers = {
     'Type': 'get-movies-by-title',
-    'X-Rapidapi-Key': 'e96cc21db3msh074982622cfddc6p1abee5jsna5db23f498e2',
+    'X-Rapidapi-Key': '8c1674b0d6msh145daffaa29913cp1d4d8fjsn2789aa40069f',
     'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com',
   };
   final headers2 = {
     'Type': 'get-movies-images-by-imdb',
-    'X-Rapidapi-Key': 'e96cc21db3msh074982622cfddc6p1abee5jsna5db23f498e2',
+    'X-Rapidapi-Key': '8c1674b0d6msh145daffaa29913cp1d4d8fjsn2789aa40069f',
     'X-Rapidapi-Host': 'movies-tv-shows-database.p.rapidapi.com',
   };
   final url = Uri.parse("https://movies-tv-shows-database.p.rapidapi.com/?title=${name}");
