@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie_app/models/movie_data.dart';
 import 'package:movie_app/models/movie_image.dart';
@@ -6,6 +7,10 @@ import 'package:movie_app/models/movie_now_playing.dart';
 import 'package:dio/dio.dart';
 
 var client = http.Client();
+
+// final nowplayingprovider= Provider<Future<List<Movie_image>>>((ref)=>Api().getnowplaying());
+
+
 
 class Api{
   Future<List<Movie_image>> getnowplaying() async {

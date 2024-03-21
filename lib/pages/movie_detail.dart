@@ -10,31 +10,24 @@ import 'package:movie_app/widgets/Splash_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Movie_detail extends ConsumerStatefulWidget {
-  // final String id;
-
-  // Movie_detail({required this.id});
-
-  @override
-  ConsumerState<Movie_detail> createState() => _Movie_detailState();
-}
-
-class _Movie_detailState extends ConsumerState<Movie_detail> {
-  
+class Movie_detail extends ConsumerWidget{
+   Movie_detail({Key? key}) : super(key: key);
 
   late Future<Movie_data> getdetail;
   late Future<String> getfanart;
-  @override
-  void initState(){
-    final hi = ref.read(idStateProvider);
-    getdetail=Api().getmoviedetail(hi);
-    getfanart=Api().getfanart(hi);
+  // @override
+  // void initState(){
+  //   final hi = ref.read(idStateProvider);
+  //   getdetail=Api().getmoviedetail(hi);
+  //   getfanart=Api().getfanart(hi);
     
-    print(hi);
-  }
+  //   print(hi);
+  // }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final _data = ref.watch(moviedetailapi);
+    final _fanart = ref.watch(moviefanartapi);
     return Scaffold(
         appBar: AppBar(
           title: Text('movie_details'),
@@ -42,36 +35,48 @@ class _Movie_detailState extends ConsumerState<Movie_detail> {
           ref.read(idStateProvider.notifier).state='';})
           
         ),
-        body: SingleChildScrollView(
-          child: FutureBuilder(
-              future: getdetail,
-              builder:(context, snapshot3) {
-                if (snapshot3.connectionState == ConnectionState.done && snapshot3.hasData) {
-                  return Container(
+        body: _data.when(
+          loading: () => const CircularProgressIndicator(),
+          error: (err, stack) => Text('Error: $err'),
+          data: (_data) {
+            final hi = _data;
+            return Container(
                     child:Column(
                     // crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
                         padding: EdgeInsets.fromLTRB(10,1,10,1),
                         child:
-                        Text(snapshot3.data!.title, style: TextStyle(fontSize: 30),),),
+                        Text(hi.title, style: TextStyle(fontSize: 30),),),
                       AspectRatio(
                         aspectRatio: 16 / 9,
-                        child: FutureBuilder(
-                          future: getfanart,
-                          builder: (context, snapshot4) {
-                            if (snapshot4.connectionState == ConnectionState.done && snapshot4.hasData) {
-                              return Image.network(
-                              snapshot4.data!,
+                        child: _fanart.when(
+                          loading: () => const CircularProgressIndicator(),
+                          error: (err, stack) => Text('Error: $err'),
+                          data: (_fanart) {
+                            return Image.network(
+                              _fanart,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
-                                  return Image.asset('assets/images/404_not_found.png', fit: BoxFit.cover);}
-                              );
-                          }
-                           else {
-                              return Splash_widget();
-                          }},
-                        ),
+                                  return Image.asset('assets/images/404_not_found.png', fit: BoxFit.cover);},
+                            );
+                          },
+                        )
+                        // child: FutureBuilder(
+                        //   future: getfanart,
+                        //   builder: (context, snapshot4) {
+                        //     if (snapshot4.connectionState == ConnectionState.done && snapshot4.hasData) {
+                        //       return Image.network(
+                        //       snapshot4.data!,
+                        //       fit: BoxFit.cover,
+                        //       errorBuilder: (context, error, stackTrace) {
+                        //           return Image.asset('assets/images/404_not_found.png', fit: BoxFit.cover);}
+                        //       );
+                        //   }
+                        //    else {
+                        //       return Splash_widget();
+                        //   }},
+                        // ),
                       ),
                       ExpansionTile(
                         title: Text('Description'),
@@ -82,7 +87,7 @@ class _Movie_detailState extends ConsumerState<Movie_detail> {
                           Padding(
                             padding: EdgeInsets.all(1.0),
                             child: Text(
-                              snapshot3.data!.description,
+                              hi.description,
                               // 'hello',
                               style: TextStyle(fontSize: 20),
                             ),
@@ -91,13 +96,13 @@ class _Movie_detailState extends ConsumerState<Movie_detail> {
                         // Padding(
                         //   padding: EdgeInsets.all(1.0),
                         //   child: Text(
-                        //     'Rating: ${snapshot3.data!.rating}',
+                        //     'Rating: ${hi.rating}',
                         //     style: TextStyle(fontSize: 20),
                         //   ),
                         // ),
                         
                         RatingBar.builder(
-                          initialRating: StringConverter().Str_double(snapshot3.data!.rating),
+                          initialRating: StringConverter().Str_double(hi.rating),
                           minRating: 0,
                           direction: Axis.horizontal,
                           allowHalfRating: true,
@@ -114,28 +119,28 @@ class _Movie_detailState extends ConsumerState<Movie_detail> {
                         Padding(
                           padding: EdgeInsets.all(1.0),
                           child: Text(
-                            'Release year : ${snapshot3.data!.year}',
+                            'Release year : ${hi.year}',
                             style: TextStyle(fontSize: 20),
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.all(1.0),
                           child: Text(
-                            'Tagline : ${snapshot3.data!.tagline}',
+                            'Tagline : ${hi.tagline}',
                             style: TextStyle(fontSize: 20),
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.all(1.0),
                           child: Text(
-                            'Age-Rated : ${snapshot3.data!.rated}',
+                            'Age-Rated : ${hi.rated}',
                             style: TextStyle(fontSize: 20),
                           ),
                         ),
                         
                         MaterialButton(
                           onPressed: ()async {
-                            final url = Uri.parse('https://www.youtube.com/watch?v=${snapshot3.data!.trailer}');
+                            final url = Uri.parse('https://www.youtube.com/watch?v=${hi.trailer}');
                             if (await canLaunchUrl(url)) {
                               await launchUrl(url);
                             } else {
@@ -169,27 +174,156 @@ class _Movie_detailState extends ConsumerState<Movie_detail> {
           
                     
                     );}
+          // }
+          )
+        // body: SingleChildScrollView(
+        //   child: FutureBuilder(
+        //       future: getdetail,
+        //       builder:(context, snapshot3) {
+        //         if (snapshot3.connectionState == ConnectionState.done && snapshot3.hasData) {
+        //           return Container(
+        //             child:Column(
+        //             // crossAxisAlignment: CrossAxisAlignment.stretch,
+        //             children: [
+        //               Padding(
+        //                 padding: EdgeInsets.fromLTRB(10,1,10,1),
+        //                 child:
+        //                 Text(hi.title, style: TextStyle(fontSize: 30),),),
+        //               AspectRatio(
+        //                 aspectRatio: 16 / 9,
+        //                 child: FutureBuilder(
+        //                   future: getfanart,
+        //                   builder: (context, snapshot4) {
+        //                     if (snapshot4.connectionState == ConnectionState.done && snapshot4.hasData) {
+        //                       return Image.network(
+        //                       snapshot4.data!,
+        //                       fit: BoxFit.cover,
+        //                       errorBuilder: (context, error, stackTrace) {
+        //                           return Image.asset('assets/images/404_not_found.png', fit: BoxFit.cover);}
+        //                       );
+        //                   }
+        //                    else {
+        //                       return Splash_widget();
+        //                   }},
+        //                 ),
+        //               ),
+        //               ExpansionTile(
+        //                 title: Text('Description'),
+        //                 trailing: Icon(Icons.arrow_drop_down),
+                      
+                        
+        //                 children: [
+        //                   Padding(
+        //                     padding: EdgeInsets.all(1.0),
+        //                     child: Text(
+        //                       hi.description,
+        //                       // 'hello',
+        //                       style: TextStyle(fontSize: 20),
+        //                     ),
+        //                   ),],),
+                        
+        //                 // Padding(
+        //                 //   padding: EdgeInsets.all(1.0),
+        //                 //   child: Text(
+        //                 //     'Rating: ${hi.rating}',
+        //                 //     style: TextStyle(fontSize: 20),
+        //                 //   ),
+        //                 // ),
+                        
+        //                 RatingBar.builder(
+        //                   initialRating: StringConverter().Str_double(hi.rating),
+        //                   minRating: 0,
+        //                   direction: Axis.horizontal,
+        //                   allowHalfRating: true,
+        //                   itemCount: 5,
+        //                   itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+        //                   itemBuilder: (context, _) => Icon(
+        //                     Icons.star,
+        //                     color: Colors.amber,
+        //                   ),
+        //                   onRatingUpdate: ( double rating) {
+        //                   },
+        //                 ),
+          
+        //                 Padding(
+        //                   padding: EdgeInsets.all(1.0),
+        //                   child: Text(
+        //                     'Release year : ${hi.year}',
+        //                     style: TextStyle(fontSize: 20),
+        //                   ),
+        //                 ),
+        //                 Padding(
+        //                   padding: EdgeInsets.all(1.0),
+        //                   child: Text(
+        //                     'Tagline : ${hi.tagline}',
+        //                     style: TextStyle(fontSize: 20),
+        //                   ),
+        //                 ),
+        //                 Padding(
+        //                   padding: EdgeInsets.all(1.0),
+        //                   child: Text(
+        //                     'Age-Rated : ${hi.rated}',
+        //                     style: TextStyle(fontSize: 20),
+        //                   ),
+        //                 ),
+                        
+        //                 MaterialButton(
+        //                   onPressed: ()async {
+        //                     final url = Uri.parse('https://www.youtube.com/watch?v=${hi.trailer}');
+        //                     if (await canLaunchUrl(url)) {
+        //                       await launchUrl(url);
+        //                     } else {
+        //                       throw 'Could not launch $url';
+        //                     }
+        //                   },
+        //                   color: Colors.red[900],
+        //                   child: Text('Open Trailer'),
+        //                 ),
+                        
+        //                 LikeButton(
+        //                   size: 30,
+        //                   circleColor:
+        //                   CircleColor(start: Color(0xff00ddff), end: Color(0xff0099cc)),
+        //                   bubblesColor: BubblesColor(
+        //                   dotPrimaryColor: Color(0xff33b5e5),
+        //                   dotSecondaryColor: Color(0xff0099cc),
+        //                     ),
+        //                   likeBuilder: (bool isLiked) {
+        //                    return Icon(
+        //                     Icons.favorite,
+        //                     color: isLiked ? Colors.red[800] : Colors.grey,
+        //                     size: 30,
+        //       );
+        //     },
+          
+        //                 ),
+        //                 ],),
+                        
+          
+          
+                    
+        //             );}
                       
                   
-                  else {
-                  return Center(
-                      child: Column(
-                        children: [
-                          Center(
-                            child:
-                              CircularProgressIndicator(),),
-                              MaterialButton(
-                                onPressed:()async{ GoRouter.of(context).go('/homepage');
-                                },
-                                child: Text('Go back to home page'),
-                              ),
-                            ],
-                          ),
-                        );}
+        //           else {
+        //           return Center(
+        //               child: Column(
+        //                 children: [
+        //                   Center(
+        //                     child:
+        //                       CircularProgressIndicator(),),
+        //                       MaterialButton(
+        //                         onPressed:()async{ GoRouter.of(context).go('/homepage');
+        //                         },
+        //                         child: Text('Go back to home page'),
+        //                       ),
+        //                     ],
+        //                   ),
+        //                 );}
                 
           
-                    }),
-        ),
+        //             }),
+        // ),
               
             
           );}}

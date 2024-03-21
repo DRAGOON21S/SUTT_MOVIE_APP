@@ -27,7 +27,7 @@ class MyAppRoutes{
       ),
       GoRoute(
       name:'movie-detail',
-      path: '/movie-detail/',
+      path: '/movie-detail',
       pageBuilder: (context, state){
         return MaterialPage(child: Movie_detail());
       },
